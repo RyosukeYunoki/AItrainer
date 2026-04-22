@@ -1,17 +1,43 @@
+// FitEvoApp.swift
+// FitEvo
 //
-//  FitEvoApp.swift
-//  FitEvo
-//
-//  Created by 柚木亮佑 on 2026/04/16.
-//
+// アプリのエントリーポイント。
+// SwiftDataのModelContainerを設定し、環境オブジェクトを提供する。
 
 import SwiftUI
+import SwiftData
 
 @main
 struct FitEvoApp: App {
+
+    // MARK: 環境オブジェクト（アプリ全体で共有）
+
+    @State private var agentManager = AgentManager()
+    @State private var healthKitManager = HealthKitManager()
+
+    // MARK: SwiftData Container
+
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([
+            UserProfile.self,
+            WorkoutSession.self,
+            WeeklyWorkoutPlan.self,
+            BodyRecord.self
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environment(agentManager)
+                .environment(healthKitManager)
         }
+        .modelContainer(sharedModelContainer)
     }
 }
