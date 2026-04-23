@@ -811,21 +811,42 @@ struct HealthKitPermissionCard: View {
 
     var body: some View {
         VStack(spacing: AppTheme.Spacing.md) {
-            HStack {
+            HStack(spacing: AppTheme.Spacing.sm) {
                 Image(systemName: "heart.text.square.fill")
                     .foregroundStyle(AppTheme.Colors.danger)
-                    .font(.system(size: 24))
+                    .font(.system(size: 28))
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("HealthKit連携")
+                    Text("Apple HealthKit連携")
                         .font(AppTheme.Typography.headline)
                         .foregroundStyle(AppTheme.Colors.textPrimary)
-                    Text("心拍・睡眠・歩数でAIを強化します")
+                    Text("AIがより正確な提案をするために使用します")
                         .font(AppTheme.Typography.caption)
                         .foregroundStyle(AppTheme.Colors.textSecondary)
                 }
                 Spacer()
             }
+
+            // 取得するデータの明示
+            VStack(spacing: 6) {
+                ForEach([
+                    ("waveform.path.ecg", "安静時心拍数"),
+                    ("moon.zzz.fill",     "睡眠時間・睡眠の質"),
+                    ("figure.walk",       "歩数"),
+                    ("flame.fill",        "アクティブカロリー"),
+                ], id: \.1) { icon, label in
+                    HStack(spacing: 8) {
+                        Image(systemName: icon)
+                            .foregroundStyle(AppTheme.Colors.primary)
+                            .frame(width: 18)
+                        Text(label)
+                            .font(AppTheme.Typography.caption)
+                            .foregroundStyle(AppTheme.Colors.textSecondary)
+                        Spacer()
+                    }
+                }
+            }
+            .padding(.vertical, AppTheme.Spacing.xs)
 
             Button(action: {
                 requested = true
@@ -833,7 +854,7 @@ struct HealthKitPermissionCard: View {
             }) {
                 HStack {
                     Image(systemName: requested ? "checkmark.circle.fill" : "link")
-                    Text(requested ? "リクエスト済み" : "HealthKitと連携する")
+                    Text(requested ? "連携リクエスト済み" : "HealthKitと連携する")
                 }
                 .font(AppTheme.Typography.headline)
                 .foregroundStyle(.white)
@@ -846,7 +867,7 @@ struct HealthKitPermissionCard: View {
             }
             .disabled(requested)
 
-            Text("スキップしても後から設定できます。\nデータはデバイス上でのみ処理されます。")
+            Text("取得したデータはすべてこの端末内でのみ処理され、\n外部サーバーには一切送信されません。\nスキップしても後から設定できます。")
                 .font(AppTheme.Typography.caption)
                 .foregroundStyle(AppTheme.Colors.textSecondary)
                 .multilineTextAlignment(.center)
